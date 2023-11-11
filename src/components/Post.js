@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import PostDate from './PostDate';
-
+import Comment from './comment.js';
 export default function Post({post}) {
   const [showComment, setShowComment] = useState(false);
 
   function handleShowComment() {
-    setShowComment(!showComment);
+    setShowComment((prevState) => !prevState);
   }
   console.log(post.comments);
   return (
@@ -19,33 +19,12 @@ export default function Post({post}) {
       </div>
       <ul className="Comments">
         {showComment &&
-          post.comments.map((comment) => (
-            <Comment key={comment.id} comment={comment} />
-          ))}
+          post.comments
+            .filter((comment) => comment.parentComment === null)
+            .map((filteredComment) => (
+              <Comment key={filteredComment.id} comment={filteredComment} />
+            ))}
       </ul>
-    </div>
-  );
-}
-
-function Comment({comment}) {
-  const [showReply, setShowReply] = useState(false);
-
-  function handleShowReply() {
-    setShowReply(!showReply);
-  }
-
-  return (
-    <div className="Comment">
-      <div onClick={handleShowReply}>{comment.comment}</div>
-      {showReply && comment.childComments.length > 0 && (
-        <ul className="Replies">
-          {comment.childComments.map((reply) => (
-            <li key={reply.id} className="Reply">
-              <Comment comment={reply} />
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }
